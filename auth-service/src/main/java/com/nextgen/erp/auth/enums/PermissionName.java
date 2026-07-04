@@ -1,0 +1,36 @@
+package com.nextgen.erp.auth.enums;
+
+public enum PermissionName{
+    STUDENT_CREATE,
+    STUDENT_READ,
+    STUDENT_UPDATE,
+    STUDENT_DELETE,
+
+    TEACHER_CREATE,
+    TEACHER_READ,
+    TEACHER_UPDATE,
+    TEACHER_DELETE,
+
+    COURSE_CREATE,
+    COURSE_READ,
+    COURSE_UPDATE,
+    COURSE_DELETE,
+
+    ATTENDANCE_MARK,
+    ATTENDANCE_READ,
+    ATTENDANCE_UPDATE,
+
+    EXAM_CREATE,
+    EXAM_READ,
+    EXAM_PUBLISH,
+
+    FEE_CREATE,
+    FEE_READ,
+    FEE_UPDATE,
+    FEE_APPROVE,
+
+    USER_CREATE,
+    USER_READ,
+    USER_UPDATE,
+    USER_DELETE
+}
