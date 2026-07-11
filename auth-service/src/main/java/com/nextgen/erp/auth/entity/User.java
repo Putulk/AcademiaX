@@ -1,6 +1,7 @@
 package com.nextgen.erp.auth.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username")
         }
 )
+@Builder
 public class User extends BaseEntity{
     @Column(nullable = false, length = 50)
     private String username;
