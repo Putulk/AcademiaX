@@ -1,13 +1,15 @@
 package com.nextgen.erp.auth.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
-
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(
         name = "users",
@@ -16,8 +18,8 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username")
         }
 )
-@Builder
-public class User extends BaseEntity{
+public class User extends BaseEntity {
+
     @Column(nullable = false, length = 50)
     private String username;
 
@@ -33,18 +35,23 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String password;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean enabled = true;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean accountNonLocked = true;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean accountNonExpired = true;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean credentialsNonExpired = true;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",

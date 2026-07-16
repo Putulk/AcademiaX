@@ -13,6 +13,12 @@ public class AuthenticationResponse {
 
     private String refreshToken;
 
+    private String tokenType;
+
+    private String username;
+
+    private String email;
+
     private String message;
 
 }

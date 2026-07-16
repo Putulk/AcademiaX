@@ -3,6 +3,7 @@ package com.nextgen.erp.auth.security.service;
 import com.nextgen.erp.auth.entity.Permission;
 import com.nextgen.erp.auth.entity.Roles;
 import com.nextgen.erp.auth.entity.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +13,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails{
     private final User user;
