@@ -20,6 +20,11 @@ spring:
       hibernate:
         format_sql: true
 
+jwt:
+  secret: 4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
+
 management:
   endpoints:
     web:

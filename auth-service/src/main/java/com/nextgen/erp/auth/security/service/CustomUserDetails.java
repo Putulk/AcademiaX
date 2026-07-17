@@ -12,10 +12,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails{
+public class CustomUserDetails implements UserDetails {
+
     private final User user;
 
     @Override
@@ -25,14 +27,20 @@ public class CustomUserDetails implements UserDetails{
 
         for (Roles role : user.getRoles()) {
 
-            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
+            authorities.add(
+                    new SimpleGrantedAuthority(role.getName().name())
+            );
 
-            for (Permission permission : role.getPermissions()) {
-                authorities.add(
-                        new SimpleGrantedAuthority(permission.getName().name())
-                );
+            if (role.getPermissions() != null) {
+                for (Permission permission : role.getPermissions()) {
+                    authorities.add(
+                            new SimpleGrantedAuthority(permission.getName().name())
+                    );
+                }
             }
         }
+
+        System.out.println("Authorities : " + authorities);
 
         return authorities;
     }
@@ -43,30 +51,43 @@ public class CustomUserDetails implements UserDetails{
     }
 
     /**
-     * Spring Security uses this as the login identifier.
-     * We are using email instead of username.
+     * Spring Security login username.
+     * We are using Email as username.
      */
     @Override
     public String getUsername() {
         return user.getEmail();
     }
 
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    public String getDisplayUsername() {
+        return user.getUsername();
+    }
+
+    public UUID getUserId() {
+        return user.getId();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
-        return user.getAccountNonExpired();
+        return Boolean.TRUE.equals(user.getAccountNonExpired());
     }
+
     @Override
     public boolean isAccountNonLocked() {
-        return user.getAccountNonLocked();
+        return Boolean.TRUE.equals(user.getAccountNonLocked());
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return user.getCredentialsNonExpired();
+        return Boolean.TRUE.equals(user.getCredentialsNonExpired());
     }
 
     @Override
     public boolean isEnabled() {
-        return user.getEnabled();
+        return Boolean.TRUE.equals(user.getEnabled());
     }
 }

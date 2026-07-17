@@ -1,6 +1,7 @@
 package com.nextgen.erp.auth.controller;
 
 import com.nextgen.erp.auth.dto.request.LoginRequest;
+import com.nextgen.erp.auth.dto.request.RefreshTokenRequest;
 import com.nextgen.erp.auth.dto.request.RegisterRequest;
 import com.nextgen.erp.auth.dto.response.AuthenticationResponse;
 import com.nextgen.erp.auth.service.AuthenticationService;
@@ -31,5 +32,14 @@ public class AuthenticationController {
             @Valid @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(authenticationService.login(request));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        return ResponseEntity.ok(
+                authenticationService.refreshToken(request)
+        );
     }
 }
