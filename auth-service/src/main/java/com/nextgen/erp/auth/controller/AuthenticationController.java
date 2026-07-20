@@ -1,7 +1,8 @@
 package com.nextgen.erp.auth.controller;
 
 import com.nextgen.erp.auth.dto.request.LoginRequest;
-import com.nextgen.erp.auth.dto.request.RefreshTokenRequest;
+import com.nextgen.erp.auth.dto.request.LogoutRequest;
+import com.nextgen.erp.auth.dto.request.RefreshToken;
 import com.nextgen.erp.auth.dto.request.RegisterRequest;
 import com.nextgen.erp.auth.dto.response.AuthenticationResponse;
 import com.nextgen.erp.auth.service.AuthenticationService;
@@ -36,10 +37,19 @@ public class AuthenticationController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthenticationResponse> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request) {
+            @RequestBody RefreshToken request) {
 
-        return ResponseEntity.ok(
-                authenticationService.refreshToken(request)
-        );
+        System.out.println("Inside Refresh Controller");
+
+        return ResponseEntity.ok(authenticationService.refreshToken(request));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            @RequestBody @Valid LogoutRequest request) {
+
+        authenticationService.logout(request);
+
+        return ResponseEntity.ok("Logout Successful");
     }
 }

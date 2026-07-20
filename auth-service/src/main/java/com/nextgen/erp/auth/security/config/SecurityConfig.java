@@ -1,5 +1,6 @@
 package com.nextgen.erp.auth.security.config;
 
+import com.nextgen.erp.auth.security.jwt.JwtAuthenticationEntryPoint;
 import com.nextgen.erp.auth.security.jwt.JwtAuthenticationFilter;
 import com.nextgen.erp.auth.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -53,10 +55,15 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/login",
+                                "/api/v1/auth/refresh-token",
                                 "/api/v1/**"
                         ).permitAll()
                         .anyRequest().authenticated()
