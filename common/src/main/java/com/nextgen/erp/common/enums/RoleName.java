@@ -1,4 +1,4 @@
-package com.nextgen.erp.auth.enums;
+package com.nextgen.erp.common.enums;
 
 public enum RoleName {
 

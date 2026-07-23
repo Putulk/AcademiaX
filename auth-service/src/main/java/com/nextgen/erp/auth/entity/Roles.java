@@ -1,6 +1,6 @@
 package com.nextgen.erp.auth.entity;
 
-import com.nextgen.erp.auth.enums.RoleName;
+import com.nextgen.erp.common.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.HashSet;

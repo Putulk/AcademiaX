@@ -1,7 +1,7 @@
 package com.nextgen.erp.auth.repository;
 
 import com.nextgen.erp.auth.entity.Roles;
-import com.nextgen.erp.auth.enums.RoleName;
+import com.nextgen.erp.common.enums.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
