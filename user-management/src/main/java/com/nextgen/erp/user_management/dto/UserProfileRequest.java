@@ -18,4 +18,5 @@ public class UserProfileRequest {
     private String city;
     private String state;
     private String country;
+    private Boolean active;
 }

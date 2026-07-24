@@ -16,7 +16,11 @@ import java.util.UUID;
 public class UserProfile {
 
     @Id
-    private UUID userId;      // Same UUID received from auth-service
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
+    private UUID userId;
 
     @Column(nullable = false)
     private String firstName;
