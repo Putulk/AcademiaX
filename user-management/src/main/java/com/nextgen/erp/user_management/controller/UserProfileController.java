@@ -2,9 +2,12 @@ package com.nextgen.erp.user_management.controller;
 
 import com.nextgen.erp.common.dto.ApiResponse;
 import com.nextgen.erp.user_management.dto.PageResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import com.nextgen.erp.user_management.dto.UserProfileRequest;
 import com.nextgen.erp.user_management.dto.UserProfileResponse;
 import com.nextgen.erp.user_management.service.UserProfileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,11 +20,38 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "User Management", description = "User Profile APIs")
 @RequiredArgsConstructor
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
 
+    @Operation(
+            summary = "Create User Profile",
+            description = "Creates a new user profile for an existing authenticated user."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "User profile created successfully"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Validation failed"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "409",
+                    description = "User already exists"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error"
+            )
+    })
     @PostMapping
     public ResponseEntity<ApiResponse<UserProfileResponse>> createUser(
             @Valid @RequestBody UserProfileRequest request) {
@@ -36,6 +66,7 @@ public class UserProfileController {
                         .build());
     }
 
+    @Operation(summary = "Get User By ID")
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserProfileResponse>> getUser(
             @PathVariable UUID userId) {
@@ -85,6 +116,7 @@ public class UserProfileController {
                         .build());
     }
 
+    @Operation(summary = "Delete User")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(
             @PathVariable UUID userId) {

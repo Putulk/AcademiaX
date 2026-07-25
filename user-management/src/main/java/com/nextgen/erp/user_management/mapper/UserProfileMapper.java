@@ -38,7 +38,7 @@ public class UserProfileMapper {
                 .city(user.getCity())
                 .state(user.getState())
                 .country(user.getCountry())
-                .profileImage(user.getProfileImage())
+                .profileImage(user.getProfileImageUrl())
                 .active(user.getActive())
                 .build();
     }
