@@ -24,6 +24,7 @@
     <modules>
         <module>auth-service</module>
         <module>user-management</module>
+        <module>student-management</module>
         <module>common</module>
     </modules>
     <scm>
