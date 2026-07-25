@@ -1,5 +1,6 @@
 package com.nextgen.erp.user_management.dto;
 
+import com.nextgen.erp.common.enums.Gender;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +15,7 @@ public class UserProfileResponse {
     private String firstName;
     private String lastName;
     private String phone;
-    private String gender;
+    private Gender gender;
     private LocalDate dateOfBirth;
     private String address;
     private String city;

@@ -1,11 +1,13 @@
 package com.nextgen.erp.user_management.service.impl;
 
+import com.nextgen.erp.common.enums.Gender;
 import com.nextgen.erp.user_management.dto.PageResponse;
 import com.nextgen.erp.user_management.dto.UserProfileRequest;
 import com.nextgen.erp.user_management.dto.UserProfileResponse;
 import com.nextgen.erp.user_management.entity.UserProfile;
 import com.nextgen.erp.user_management.exception.ResourceNotFoundException;
 import com.nextgen.erp.user_management.repository.UserProfileRepository;
+import com.nextgen.erp.user_management.service.FileStorageService;
 import com.nextgen.erp.user_management.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,7 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +26,7 @@ import java.util.UUID;
 public class UserProfileServiceImpl implements UserProfileService{
 
     private final UserProfileRepository repository;
+    private final FileStorageService fileStorageService;
 
     @Override
     public UserProfileResponse create(UserProfileRequest request) {
@@ -118,9 +123,9 @@ public class UserProfileServiceImpl implements UserProfileService{
         profile.setState(request.getState());
         profile.setCountry(request.getCountry());
 
-        repository.save(profile);
+        UserProfile updatedProfile = repository.save(profile);
 
-        return map(profile);
+        return map(updatedProfile);
     }
 
     @Override
@@ -146,8 +151,37 @@ public class UserProfileServiceImpl implements UserProfileService{
                 .city(profile.getCity())
                 .state(profile.getState())
                 .country(profile.getCountry())
-                .profileImage(profile.getProfileImage())
+                .profileImage(profile.getProfileImageUrl())
                 .active(profile.getActive())
                 .build();
+    }
+
+    @Override
+    public UserProfileResponse uploadProfileImage(UUID userId, MultipartFile file) {
+
+        UserProfile profile = repository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User profile not found"));
+
+        try {
+
+            // Delete previous image if exists
+            if (profile.getProfileImageUrl() != null &&
+                    !profile.getProfileImageUrl().isBlank()) {
+
+                fileStorageService.delete(profile.getProfileImageUrl());
+            }
+
+            String fileName = fileStorageService.uploadProfileImage(file);
+
+            profile.setProfileImageUrl(fileName);
+
+            repository.save(profile);
+
+            return map(profile);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to upload image", e);
+        }
     }
 }

@@ -8,8 +8,10 @@ import com.nextgen.erp.user_management.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -95,5 +97,27 @@ public class UserProfileController {
                         .message("User deleted successfully")
                         .data(null)
                         .build());
+    }
+
+    @PostMapping(
+            value = "/{userId}/profile-image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<UserProfileResponse>> uploadProfileImage(
+
+            @PathVariable UUID userId,
+
+            @RequestParam("file") MultipartFile file) {
+
+        UserProfileResponse response =
+                userProfileService.uploadProfileImage(userId, file);
+
+        return ResponseEntity.ok(
+                ApiResponse.<UserProfileResponse>builder()
+                        .success(true)
+                        .message("Profile image uploaded successfully")
+                        .data(response)
+                        .build()
+        );
     }
 }

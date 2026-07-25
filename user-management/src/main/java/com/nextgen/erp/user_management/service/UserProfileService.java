@@ -4,6 +4,7 @@ import com.nextgen.erp.user_management.dto.PageResponse;
 import com.nextgen.erp.user_management.dto.UserProfileRequest;
 import com.nextgen.erp.user_management.dto.UserProfileResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,4 +27,6 @@ public interface UserProfileService{
             String direction,
             String search
     );
+
+    UserProfileResponse uploadProfileImage(UUID userId, MultipartFile file);
 }

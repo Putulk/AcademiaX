@@ -1,9 +1,11 @@
 package com.nextgen.erp.user_management.entity;
 
+import com.nextgen.erp.common.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -30,7 +32,8 @@ public class UserProfile {
 
     private String phone;
 
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     private LocalDate dateOfBirth;
 
@@ -42,8 +45,25 @@ public class UserProfile {
 
     private String country;
 
-    private String profileImage;
+    private String profileImageUrl;
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
