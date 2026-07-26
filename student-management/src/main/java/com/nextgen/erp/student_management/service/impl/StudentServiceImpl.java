@@ -1,5 +1,7 @@
 package com.nextgen.erp.student_management.service.impl;
 
+import com.nextgen.erp.student_management.client.UserManagementClient;
+import com.nextgen.erp.student_management.client.dto.UserProfileResponse;
 import com.nextgen.erp.student_management.dto.StudentRequest;
 import com.nextgen.erp.student_management.dto.StudentResponse;
 import com.nextgen.erp.student_management.entity.Student;
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class StudentServiceImpl implements StudentService{
 
     private final StudentRepository repository;
+    private final UserManagementClient userManagementClient;
 
     @Override
     public StudentResponse create(StudentRequest request) {
@@ -32,6 +35,13 @@ public class StudentServiceImpl implements StudentService{
 
         if (repository.existsByRollNumber(request.getRollNumber())) {
             throw new ResourceAlreadyExistsException("Roll number already exists.");
+        }
+
+        UserProfileResponse profile =
+                userManagementClient.getUserProfile(request.getUserProfileId());
+
+        if (!Boolean.TRUE.equals(profile.getActive())) {
+            throw new ResourceAlreadyExistsException("User profile is inactive.");
         }
 
         Student student = Student.builder()
