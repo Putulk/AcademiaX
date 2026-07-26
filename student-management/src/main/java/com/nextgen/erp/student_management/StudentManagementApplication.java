@@ -1,4 +1,4 @@
-package com.nextgen.erp.user_management;
+package com.nextgen.erp.student_management;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

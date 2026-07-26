@@ -1,4 +1,4 @@
-package com.nextgen.erp.user_management.entity;
+package com.nextgen.erp.student_management.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

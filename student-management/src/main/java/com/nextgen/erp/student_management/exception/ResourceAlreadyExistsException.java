@@ -1,4 +1,4 @@
-package com.nextgen.erp.user_management.exception;
+package com.nextgen.erp.student_management.exception;
 
 public class ResourceAlreadyExistsException extends RuntimeException{
     public ResourceAlreadyExistsException(String message) {

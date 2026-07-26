@@ -1,4 +1,4 @@
-package com.nextgen.erp.user_management.dto;
+package com.nextgen.erp.student_management.dto;
 
 import lombok.Builder;
 import lombok.Data;

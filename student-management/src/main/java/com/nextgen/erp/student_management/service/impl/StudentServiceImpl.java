@@ -1,12 +1,12 @@
-package com.nextgen.erp.user_management.service.impl;
+package com.nextgen.erp.student_management.service.impl;
 
-import com.nextgen.erp.user_management.dto.StudentRequest;
-import com.nextgen.erp.user_management.dto.StudentResponse;
-import com.nextgen.erp.user_management.entity.Student;
-import com.nextgen.erp.user_management.exception.ResourceAlreadyExistsException;
-import com.nextgen.erp.user_management.exception.ResourceNotFoundException;
-import com.nextgen.erp.user_management.repository.StudentRepository;
-import com.nextgen.erp.user_management.service.StudentService;
+import com.nextgen.erp.student_management.dto.StudentRequest;
+import com.nextgen.erp.student_management.dto.StudentResponse;
+import com.nextgen.erp.student_management.entity.Student;
+import com.nextgen.erp.student_management.exception.ResourceAlreadyExistsException;
+import com.nextgen.erp.student_management.exception.ResourceNotFoundException;
+import com.nextgen.erp.student_management.repository.StudentRepository;
+import com.nextgen.erp.student_management.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

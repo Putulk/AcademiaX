@@ -1,7 +1,7 @@
-package com.nextgen.erp.user_management.service;
+package com.nextgen.erp.student_management.service;
 
-import com.nextgen.erp.user_management.dto.StudentRequest;
-import com.nextgen.erp.user_management.dto.StudentResponse;
+import com.nextgen.erp.student_management.dto.StudentRequest;
+import com.nextgen.erp.student_management.dto.StudentResponse;
 
 import java.util.List;
 import java.util.UUID;

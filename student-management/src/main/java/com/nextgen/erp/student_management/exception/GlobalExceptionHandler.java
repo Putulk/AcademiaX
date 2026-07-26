@@ -1,4 +1,4 @@
-package com.nextgen.erp.user_management.exception;
+package com.nextgen.erp.student_management.exception;
 
 import com.nextgen.erp.common.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ApiResponse<Object>> handleAlreadyExists(ResourceAlreadyExistsException ex) {
 
         ApiResponse<Object> response = ApiResponse.builder()
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
                 .data(null)
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.ALREADY_REPORTED);
     }
 
     @ExceptionHandler(Exception.class)

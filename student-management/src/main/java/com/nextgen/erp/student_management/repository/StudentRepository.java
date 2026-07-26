@@ -1,6 +1,6 @@
-package com.nextgen.erp.user_management.repository;
+package com.nextgen.erp.student_management.repository;
 
-import com.nextgen.erp.user_management.entity.Student;
+import com.nextgen.erp.student_management.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

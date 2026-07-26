@@ -1,4 +1,4 @@
-package com.nextgen.erp.user_management.exception;
+package com.nextgen.erp.student_management.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 
