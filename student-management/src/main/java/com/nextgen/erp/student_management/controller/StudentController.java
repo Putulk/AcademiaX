@@ -5,7 +5,6 @@ import com.nextgen.erp.student_management.dto.StudentRequest;
 import com.nextgen.erp.student_management.dto.StudentResponse;
 import com.nextgen.erp.student_management.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,11 +22,6 @@ public class StudentController {
     private final StudentService studentService;
 
     @Operation(summary = "Create Student")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Student created"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Validation failed"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Student already exists")
-    })
     @PostMapping
     public ResponseEntity<ApiResponse<StudentResponse>> create(
             @Valid @RequestBody StudentRequest request) {
@@ -42,16 +36,19 @@ public class StudentController {
                         .build());
     }
 
+    @Operation(summary = "Get Student By Id")
     @GetMapping("/{id}")
     public StudentResponse getById(@PathVariable UUID id) {
         return studentService.getById(id);
     }
 
+    @Operation(summary = "Get All Students")
     @GetMapping
     public List<StudentResponse> getAll() {
         return studentService.getAll();
     }
 
+    @Operation(summary = "Update Student")
     @PutMapping("/{id}")
     public StudentResponse update(
             @PathVariable UUID id,
@@ -60,6 +57,7 @@ public class StudentController {
         return studentService.update(id, request);
     }
 
+    @Operation(summary = "Delete Student")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {

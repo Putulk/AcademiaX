@@ -1,5 +1,6 @@
 package com.nextgen.erp.auth.entity;
 
+import com.nextgen.erp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username")
         }
 )
-public class User extends BaseEntity {
+public class User extends BaseEntity{
 
     @Column(nullable = false, length = 50)
     private String username;

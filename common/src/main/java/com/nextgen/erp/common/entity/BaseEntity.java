@@ -1,4 +1,4 @@
-package com.nextgen.erp.auth.entity;
+package com.nextgen.erp.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

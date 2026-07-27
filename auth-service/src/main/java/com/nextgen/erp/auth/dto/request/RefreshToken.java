@@ -1,6 +1,6 @@
 package com.nextgen.erp.auth.dto.request;
 
-import com.nextgen.erp.auth.entity.BaseEntity;
+import com.nextgen.erp.common.entity.BaseEntity;
 import com.nextgen.erp.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

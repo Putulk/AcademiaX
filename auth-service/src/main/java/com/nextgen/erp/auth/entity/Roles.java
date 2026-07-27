@@ -1,5 +1,6 @@
 package com.nextgen.erp.auth.entity;
 
+import com.nextgen.erp.common.entity.BaseEntity;
 import com.nextgen.erp.common.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +10,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "roles")
-public class Roles extends BaseEntity {
+public class Roles extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private RoleName name;

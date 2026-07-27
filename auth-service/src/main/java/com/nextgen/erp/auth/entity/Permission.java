@@ -1,6 +1,7 @@
 package com.nextgen.erp.auth.entity;
 
 import com.nextgen.erp.auth.enums.PermissionName;
+import com.nextgen.erp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "permissions")
-public class Permission extends BaseEntity {
+public class Permission extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private PermissionName name;
