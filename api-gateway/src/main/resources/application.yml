@@ -8,7 +8,6 @@ spring:
   cloud:
     gateway:
       routes:
-
         - id: auth-service
           uri: http://localhost:8081
           predicates:
@@ -24,8 +23,39 @@ spring:
           predicates:
             - Path=/api/v1/students/**
 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:3000
+              - http://localhost:4200
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 10s
+jwt:
+  secret: 4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f
+  expiration: 86400000
+
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    gateway:
+      access: unrestricted
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    reactor.netty.http.client: INFO

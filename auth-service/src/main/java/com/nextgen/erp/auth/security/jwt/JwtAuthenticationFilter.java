@@ -1,5 +1,6 @@
 package com.nextgen.erp.auth.security.jwt;
 
+import com.nextgen.erp.auth.security.service.CustomUserDetails;
 import com.nextgen.erp.auth.security.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -57,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("Authorities : "
                         + userDetails.getAuthorities());
 
-                if (jwtService.isTokenValid(jwt, userDetails)) {
+                if (jwtService.isTokenValid(jwt,(CustomUserDetails)userDetails)) {
 
                     System.out.println("JWT VALID");
 
