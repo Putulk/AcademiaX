@@ -25,6 +25,7 @@
         <module>auth-service</module>
         <module>user-management</module>
         <module>student-management</module>
+        <module>academic-management</module>
         <module>common</module>
         <module>api-gateway</module>
     </modules>

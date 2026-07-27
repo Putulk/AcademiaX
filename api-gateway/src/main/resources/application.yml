@@ -23,6 +23,11 @@ spring:
           predicates:
             - Path=/api/v1/students/**
 
+        - id: academic-management
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/academic/**
+
       globalcors:
         corsConfigurations:
           '[/**]':
