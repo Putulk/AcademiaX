@@ -21,12 +21,17 @@ spring:
         - id: student-management
           uri: http://localhost:8083
           predicates:
-            - Path=/api/v1/students/**
+            - Path=/api/v1/students/**,/api/v1/student-enrollments/**
 
         - id: academic-management
           uri: http://localhost:8084
           predicates:
             - Path=/api/v1/academic/**
+
+        - id: faculty-management
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/v1/teachers/**,/api/v1/teacher-assignments/**
 
       globalcors:
         corsConfigurations:
