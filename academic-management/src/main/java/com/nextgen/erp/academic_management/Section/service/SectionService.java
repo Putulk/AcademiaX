@@ -17,4 +17,6 @@ public interface SectionService {
     SectionResponse update(UUID id, SectionRequest request);
 
     void delete(UUID id);
+
+    boolean exists(UUID id);
 }

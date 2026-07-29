@@ -82,4 +82,12 @@ public class TeacherController {
                         .message("Teacher deleted successfully.")
                         .build());
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> exists(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(teacherService.exists(id))
+        );
+    }
 }

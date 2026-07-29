@@ -17,4 +17,6 @@ public interface TeacherService {
     TeacherResponse update(UUID id, TeacherRequest request);
 
     void delete(UUID id);
+
+    boolean exists(UUID id);
 }

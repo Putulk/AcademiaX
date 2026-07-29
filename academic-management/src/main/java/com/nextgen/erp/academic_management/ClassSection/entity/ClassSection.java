@@ -44,15 +44,15 @@ public class ClassSection extends BaseEntity {
     private Integer capacity = 40;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academic_year_id")
+    @JoinColumn(name = "academic_year")
     private AcademicYear academicYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_room_id")
+    @JoinColumn(name = "class_room")
     private ClassRoom classRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id")
+    @JoinColumn(name = "section")
     private Section section;
 
     @Builder.Default

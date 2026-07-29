@@ -88,4 +88,12 @@ public class SectionController {
                         .build()
         );
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> exists(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(service.exists(id))
+        );
+    }
 }

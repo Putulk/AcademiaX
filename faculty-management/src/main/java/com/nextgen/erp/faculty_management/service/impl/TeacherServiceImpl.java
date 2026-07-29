@@ -82,4 +82,9 @@ public class TeacherServiceImpl implements TeacherService {
 
         repository.delete(teacher);
     }
+
+    @Override
+    public boolean exists(UUID id) {
+        return repository.existsById(id);
+    }
 }

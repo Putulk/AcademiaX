@@ -80,4 +80,12 @@ public class StudentEnrollmentController {
                         .message("Enrollment deleted successfully.")
                         .build());
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> exists(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(studentEnrollmentService.exists(id))
+        );
+    }
 }

@@ -99,4 +99,9 @@ public class StudentEnrollmentServiceImpl
 
         repository.delete(enrollment);
     }
+
+    @Override
+    public boolean exists(UUID id) {
+        return repository.existsById(id);
+    }
 }

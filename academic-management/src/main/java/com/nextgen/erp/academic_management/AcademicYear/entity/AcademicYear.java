@@ -1,7 +1,9 @@
 package com.nextgen.erp.academic_management.AcademicYear.entity;
 
 import com.nextgen.erp.common.entity.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AcademicYear extends BaseEntity {
+public class AcademicYear extends BaseEntity{
 
     @Column(nullable = false, unique = true, length = 20)
     private String name;

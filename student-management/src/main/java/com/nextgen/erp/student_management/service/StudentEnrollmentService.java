@@ -18,4 +18,6 @@ public interface StudentEnrollmentService {
                                      StudentEnrollmentRequest request);
 
     void delete(UUID id);
+
+    boolean exists(UUID id);
 }

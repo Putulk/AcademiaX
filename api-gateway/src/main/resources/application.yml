@@ -9,29 +9,34 @@ spring:
     gateway:
       routes:
         - id: auth-service
-          uri: http://localhost:8081
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/v1/auth/**
 
         - id: user-management
-          uri: http://localhost:8082
+          uri: lb://USER-MANAGEMENT
           predicates:
             - Path=/api/v1/users/**
 
         - id: student-management
-          uri: http://localhost:8083
+          uri: lb://STUDENT-MANAGEMENT
           predicates:
             - Path=/api/v1/students/**,/api/v1/student-enrollments/**
 
         - id: academic-management
-          uri: http://localhost:8084
+          uri: lb://ACADEMIC-MANAGEMENT
           predicates:
             - Path=/api/v1/academic/**
 
         - id: faculty-management
-          uri: http://localhost:8085
+          uri: lb://FACULTY-MANAGEMENT
           predicates:
             - Path=/api/v1/teachers/**,/api/v1/teacher-assignments/**
+
+        - id: attendance-management
+          uri: lb://ATTENDANCE-MANAGEMENT
+          predicates:
+            - Path=/api/v1/attendance/**
 
       globalcors:
         corsConfigurations:
@@ -64,6 +69,11 @@ management:
   endpoint:
     gateway:
       access: unrestricted
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 logging:
   level:

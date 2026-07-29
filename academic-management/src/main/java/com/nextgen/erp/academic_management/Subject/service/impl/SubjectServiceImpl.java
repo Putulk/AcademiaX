@@ -93,4 +93,9 @@ public class SubjectServiceImpl implements SubjectService{
 
         repository.delete(entity);
     }
+
+    @Override
+    public boolean exists(UUID id) {
+        return repository.existsById(id);
+    }
 }

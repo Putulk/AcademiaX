@@ -101,4 +101,12 @@ public class SubjectController {
                         .build()
         );
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> exists(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(subjectService.exists(id))
+        );
+    }
 }

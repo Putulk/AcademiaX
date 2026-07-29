@@ -17,4 +17,6 @@ public interface ClassRoomService {
     ClassRoomResponse update(UUID id, ClassRoomRequest request);
 
     void delete(UUID id);
+
+    boolean exists(UUID id);
 }

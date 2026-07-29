@@ -82,4 +82,9 @@ public class ClassRoomServiceImpl implements ClassRoomService{
 
         repository.delete(entity);
     }
+
+    @Override
+    public boolean exists(UUID id) {
+        return repository.existsById(id);
+    }
 }

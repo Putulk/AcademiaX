@@ -17,4 +17,5 @@ public interface SubjectService {
     SubjectResponse update(UUID id, SubjectRequest request);
 
     void delete(UUID id);
+    boolean exists(UUID id);
 }

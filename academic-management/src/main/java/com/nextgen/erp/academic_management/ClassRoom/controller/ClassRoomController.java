@@ -59,4 +59,12 @@ public class ClassRoomController {
     public void delete(@PathVariable UUID id) {
         service.delete(id);
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> exists(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(service.exists(id))
+        );
+    }
 }
