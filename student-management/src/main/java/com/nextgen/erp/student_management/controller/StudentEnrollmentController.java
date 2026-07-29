@@ -85,7 +85,7 @@ public class StudentEnrollmentController {
     public ResponseEntity<ApiResponse<Boolean>> exists(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                ApiResponse.success(studentEnrollmentService.exists(id))
+                ApiResponse.success(service.exists(id))
         );
     }
 }

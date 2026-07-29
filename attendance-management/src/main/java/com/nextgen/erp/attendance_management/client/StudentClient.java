@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "STUDENT-MANAGEMENT")
+@FeignClient(name = "STUDENT-MANAGEMENT-SERVICE")
 public interface StudentClient {
 
-    @GetMapping("/api/v1/enrollments/{id}/exists")
+    @GetMapping("/api/v1/student-enrollments/{id}/exists")
     ApiResponse<Boolean> exists(@PathVariable UUID id);
 
 }

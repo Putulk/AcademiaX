@@ -1,4 +1,4 @@
-package com.nextgen.erp.student_management.config;
+package com.nextgen.erp.attendance_management.config;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
