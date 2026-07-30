@@ -1,4 +1,4 @@
-package com.nextgen.erp.attendance_management;
+package com.nextgen.erp.examination_management;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

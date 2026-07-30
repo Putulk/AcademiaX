@@ -38,6 +38,11 @@ spring:
           predicates:
             - Path=/api/v1/attendance/**
 
+        - id: examination-management
+          uri: lb://EXAMINATION-MANAGEMENT-SERVICE
+          predicates:
+            - Path=/api/v1/examination/**
+
       globalcors:
         corsConfigurations:
           '[/**]':
