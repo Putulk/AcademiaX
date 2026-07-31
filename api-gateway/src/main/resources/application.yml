@@ -19,7 +19,7 @@ spring:
             - Path=/api/v1/users/**
 
         - id: student-management
-          uri: lb://STUDENT-MANAGEMENT
+          uri: lb://STUDENT-MANAGEMENT-SERVICE
           predicates:
             - Path=/api/v1/students/**,/api/v1/student-enrollments/**
 

@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -41,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
+    @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -75,6 +77,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
 
         return AuthenticationResponse.builder()
+                .id(user.getId())
+                .roles(List.of(studentRole.getName().name()))
                 .message("User registered successfully.")
                 .build();
     }
@@ -108,11 +112,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         refreshTokenRepository.save(entity);
 
         return AuthenticationResponse.builder()
+                .id(userDetails.getUserId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .username(userDetails.getDisplayUsername())
                 .email(userDetails.getEmail())
+                .roles(userDetails.getUser().getRoles()
+                        .stream()
+                        .map(role -> role.getName().name())
+                        .toList())
                 .message("Login Successful")
                 .build();
     }
@@ -180,11 +189,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         refreshTokenRepository.save(refreshToken);
 
         return AuthenticationResponse.builder()
+                .id(user.getId())
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .tokenType("Bearer")
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .roles(user.getRoles()
+                        .stream()
+                        .map(role -> role.getName().name())
+                        .toList())
                 .message("Access Token refreshed successfully.")
                 .build();
     }

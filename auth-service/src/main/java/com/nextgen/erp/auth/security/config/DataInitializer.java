@@ -13,25 +13,31 @@ import org.springframework.context.annotation.Configuration;
 public class DataInitializer {
 
     private final RoleRepository roleRepository;
+    private final AdminSeeder adminSeeder;
 
     @Bean
-    CommandLineRunner initRoles() {
+    CommandLineRunner initData() {
 
         return args -> {
-
-            if (roleRepository.count() == 0) {
-
-                createRole(RoleName.ROLE_SUPER_ADMIN, "Super Administrator");
-                createRole(RoleName.ROLE_ADMIN, "Administrator");
-                createRole(RoleName.ROLE_MANAGEMENT, "Management");
-                createRole(RoleName.ROLE_TEACHER, "Teacher");
-                createRole(RoleName.ROLE_STUDENT, "Student");
-                createRole(RoleName.ROLE_PARENT, "Parent");
-                createRole(RoleName.ROLE_ACCOUNTANT, "Accountant");
-                createRole(RoleName.ROLE_LIBRARIAN, "Librarian");
-                createRole(RoleName.ROLE_HR, "Human Resource");
-            }
+            seedRoles();
+            adminSeeder.seedDefaultAdminIfMissing();
         };
+    }
+
+    private void seedRoles() {
+
+        if (roleRepository.count() == 0) {
+
+            createRole(RoleName.ROLE_SUPER_ADMIN, "Super Administrator");
+            createRole(RoleName.ROLE_ADMIN, "Administrator");
+            createRole(RoleName.ROLE_MANAGEMENT, "Management");
+            createRole(RoleName.ROLE_TEACHER, "Teacher");
+            createRole(RoleName.ROLE_STUDENT, "Student");
+            createRole(RoleName.ROLE_PARENT, "Parent");
+            createRole(RoleName.ROLE_ACCOUNTANT, "Accountant");
+            createRole(RoleName.ROLE_LIBRARIAN, "Librarian");
+            createRole(RoleName.ROLE_HR, "Human Resource");
+        }
     }
 
     private void createRole(RoleName roleName, String description) {
