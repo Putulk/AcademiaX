@@ -1,11 +1,12 @@
 import { teacherApi } from "../api/facultyApi";
+import { loadUserProfileOptions } from "../api/directory";
 import { CrudPage, type CrudField, type CrudColumn } from "../components/CrudPage";
 import { StatusBadge } from "../components/StatusBadge";
 import type { Teacher, TeacherRequest } from "../types/faculty";
 
 const columns: CrudColumn<Teacher>[] = [
   { key: "employeeCode", label: "Employee Code" },
-  { key: "userProfileId", label: "User Profile ID", mono: true },
+  { key: "userProfileId", label: "Name", lookup: loadUserProfileOptions },
   { key: "designation", label: "Designation" },
   { key: "department", label: "Department" },
   { key: "joiningDate", label: "Joined" },
@@ -17,7 +18,7 @@ const columns: CrudColumn<Teacher>[] = [
 ];
 
 const fields: CrudField<TeacherRequest>[] = [
-  { key: "userProfileId", label: "User Profile ID (UUID)", type: "text", required: true },
+  { key: "userProfileId", label: "User Profile", type: "reference", loadOptions: loadUserProfileOptions, required: true },
   { key: "employeeCode", label: "Employee Code", type: "text", required: true },
   { key: "designation", label: "Designation", type: "text" },
   { key: "department", label: "Department", type: "text" },

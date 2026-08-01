@@ -1,5 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { getAllowedSections, type SectionKey } from "../auth/permissions";
+import { StatusBadge } from "./StatusBadge";
 
 interface NavItem {
   to: string;
@@ -8,11 +10,15 @@ interface NavItem {
 }
 
 interface NavSection {
-  heading: string;
+  heading: SectionKey;
   items: NavItem[];
 }
 
-const BASE_NAV_SECTIONS: NavSection[] = [
+const ALL_NAV_SECTIONS: NavSection[] = [
+  {
+    heading: "Admin",
+    items: [{ to: "/admin/users", label: "Users & Roles", icon: "🛡️" }],
+  },
   {
     heading: "Users",
     items: [{ to: "/user-profiles", label: "User Profiles", icon: "🪪" }],
@@ -67,15 +73,10 @@ export function Layout() {
   const displayName = auth.user?.username || auth.user?.email || "Signed in";
   const tooltip = auth.user?.id ? `${displayName} — User ID: ${auth.user.id}` : displayName;
 
-  const navSections: NavSection[] = auth.isAdmin
-    ? [
-        {
-          heading: "Admin",
-          items: [{ to: "/admin/users", label: "Users & Roles", icon: "🛡️" }],
-        },
-        ...BASE_NAV_SECTIONS,
-      ]
-    : BASE_NAV_SECTIONS;
+  const allowedSections = getAllowedSections(auth.user?.roles);
+  const navSections = ALL_NAV_SECTIONS.filter((section) =>
+    allowedSections.has(section.heading),
+  );
 
   return (
     <div className="app-shell">
@@ -108,6 +109,11 @@ export function Layout() {
         <div className="sidebar__footer">
           <div className="sidebar__user" title={tooltip}>
             {displayName}
+          </div>
+          <div className="badge-group">
+            {(auth.user?.roles ?? []).map((role) => (
+              <StatusBadge key={role} value={role} tone="neutral" />
+            ))}
           </div>
           <button type="button" className="sidebar__logout" onClick={handleLogout}>
             Log out

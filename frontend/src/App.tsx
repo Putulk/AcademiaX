@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { ProtectedLayout, PublicOnlyRoute } from "./auth/RouteGuards";
+import { HomeRedirect, ProtectedLayout, PublicOnlyRoute, SectionGuard } from "./auth/RouteGuards";
 import { AuthPage } from "./pages/AuthPage";
+import { NoAccessPage } from "./pages/NoAccessPage";
 import { UserProfilesPage } from "./pages/UserProfilesPage";
 import { UsersRolesPage } from "./pages/UsersRolesPage";
 import { AcademicYearsPage } from "./pages/AcademicYearsPage";
@@ -25,28 +26,44 @@ function App() {
       </Route>
 
       <Route element={<ProtectedLayout />}>
-        <Route index element={<Navigate to="/exams" replace />} />
+        <Route index element={<HomeRedirect />} />
+        <Route path="/no-access" element={<NoAccessPage />} />
 
-        <Route path="/user-profiles" element={<UserProfilesPage />} />
-        <Route path="/admin/users" element={<UsersRolesPage />} />
+        <Route element={<SectionGuard section="Admin" />}>
+          <Route path="/admin/users" element={<UsersRolesPage />} />
+        </Route>
 
-        <Route path="/academic-years" element={<AcademicYearsPage />} />
-        <Route path="/classes" element={<ClassRoomsPage />} />
-        <Route path="/sections" element={<SectionsPage />} />
-        <Route path="/subjects" element={<SubjectsPage />} />
-        <Route path="/class-sections" element={<ClassSectionsPage />} />
+        <Route element={<SectionGuard section="Users" />}>
+          <Route path="/user-profiles" element={<UserProfilesPage />} />
+        </Route>
 
-        <Route path="/teachers" element={<TeachersPage />} />
-        <Route path="/teacher-assignments" element={<TeacherAssignmentsPage />} />
+        <Route element={<SectionGuard section="Academic" />}>
+          <Route path="/academic-years" element={<AcademicYearsPage />} />
+          <Route path="/classes" element={<ClassRoomsPage />} />
+          <Route path="/sections" element={<SectionsPage />} />
+          <Route path="/subjects" element={<SubjectsPage />} />
+          <Route path="/class-sections" element={<ClassSectionsPage />} />
+        </Route>
 
-        <Route path="/students" element={<StudentsPage />} />
-        <Route path="/student-enrollments" element={<StudentEnrollmentsPage />} />
+        <Route element={<SectionGuard section="Faculty" />}>
+          <Route path="/teachers" element={<TeachersPage />} />
+          <Route path="/teacher-assignments" element={<TeacherAssignmentsPage />} />
+        </Route>
 
-        <Route path="/attendance" element={<AttendancePage />} />
+        <Route element={<SectionGuard section="Students" />}>
+          <Route path="/students" element={<StudentsPage />} />
+          <Route path="/student-enrollments" element={<StudentEnrollmentsPage />} />
+        </Route>
 
-        <Route path="/exams" element={<ExamsPage />} />
-        <Route path="/schedules" element={<ExamSchedulesPage />} />
-        <Route path="/results" element={<ExamResultsPage />} />
+        <Route element={<SectionGuard section="Attendance" />}>
+          <Route path="/attendance" element={<AttendancePage />} />
+        </Route>
+
+        <Route element={<SectionGuard section="Examination" />}>
+          <Route path="/exams" element={<ExamsPage />} />
+          <Route path="/schedules" element={<ExamSchedulesPage />} />
+          <Route path="/results" element={<ExamResultsPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

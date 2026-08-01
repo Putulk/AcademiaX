@@ -1,13 +1,19 @@
 import { teacherAssignmentApi } from "../api/facultyApi";
+import {
+  loadAcademicYearOptions,
+  loadClassSectionOptions,
+  loadSubjectOptions,
+  loadTeacherOptions,
+} from "../api/directory";
 import { CrudPage, type CrudField, type CrudColumn } from "../components/CrudPage";
 import { StatusBadge } from "../components/StatusBadge";
 import type { TeacherAssignment, TeacherAssignmentRequest } from "../types/faculty";
 
 const columns: CrudColumn<TeacherAssignment>[] = [
-  { key: "teacherId", label: "Teacher ID", mono: true },
-  { key: "classSectionId", label: "Class Section ID", mono: true },
-  { key: "subjectId", label: "Subject ID", mono: true },
-  { key: "academicYearId", label: "Academic Year ID", mono: true },
+  { key: "teacherId", label: "Teacher", lookup: loadTeacherOptions },
+  { key: "classSectionId", label: "Class Section", lookup: loadClassSectionOptions },
+  { key: "subjectId", label: "Subject", lookup: loadSubjectOptions },
+  { key: "academicYearId", label: "Academic Year", lookup: loadAcademicYearOptions },
   {
     key: "active",
     label: "Status",
@@ -16,10 +22,10 @@ const columns: CrudColumn<TeacherAssignment>[] = [
 ];
 
 const fields: CrudField<TeacherAssignmentRequest>[] = [
-  { key: "teacherId", label: "Teacher ID (UUID)", type: "text", required: true },
-  { key: "classSectionId", label: "Class Section ID (UUID)", type: "text", required: true },
-  { key: "subjectId", label: "Subject ID (UUID)", type: "text", required: true },
-  { key: "academicYearId", label: "Academic Year ID (UUID)", type: "text", required: true },
+  { key: "teacherId", label: "Teacher", type: "reference", loadOptions: loadTeacherOptions, required: true },
+  { key: "classSectionId", label: "Class Section", type: "reference", loadOptions: loadClassSectionOptions, required: true },
+  { key: "subjectId", label: "Subject", type: "reference", loadOptions: loadSubjectOptions, required: true },
+  { key: "academicYearId", label: "Academic Year", type: "reference", loadOptions: loadAcademicYearOptions, required: true },
   { key: "active", label: "Active", type: "checkbox" },
 ];
 

@@ -4,19 +4,22 @@ import { ConfirmDialog } from "./ConfirmDialog";
 import { ToastStack } from "./Toast";
 import { useToasts } from "../hooks/useToasts";
 import { ApiError } from "../api/client";
+import type { ReferenceOption } from "../api/directory";
 
 export interface CrudColumn<T> {
   key: string;
   label: string;
   render?: (item: T) => ReactNode;
   mono?: boolean;
+  lookup?: () => Promise<ReferenceOption[]>;
 }
 
 export interface CrudField<TReq> {
   key: keyof TReq;
   label: string;
-  type: "text" | "number" | "date" | "time" | "select" | "checkbox" | "textarea";
+  type: "text" | "number" | "date" | "time" | "select" | "reference" | "checkbox" | "textarea";
   options?: string[];
+  loadOptions?: () => Promise<ReferenceOption[]>;
   required?: boolean;
   placeholder?: string;
   step?: string;
@@ -59,7 +62,47 @@ export function CrudPage<T extends { id: string }, TReq extends object>({
   const [form, setForm] = useState<TReq>(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<T | null>(null);
   const [saving, setSaving] = useState(false);
+  const [referenceOptions, setReferenceOptions] = useState<Record<string, ReferenceOption[]>>({});
+  const [referencesLoading, setReferencesLoading] = useState(false);
   const toasts = useToasts();
+
+  useEffect(() => {
+    // Columns and reference-type fields often look up the same entity (e.g. a
+    // "teacherId" column and a "teacherId" reference field both want the
+    // teacher directory) — de-dupe by key so it's only fetched once.
+    const loaders = new Map<string, () => Promise<ReferenceOption[]>>();
+
+    fields.forEach((f) => {
+      if (f.type === "reference" && f.loadOptions) {
+        loaders.set(String(f.key), f.loadOptions);
+      }
+    });
+    columns.forEach((c) => {
+      if (c.lookup && !loaders.has(c.key)) {
+        loaders.set(c.key, c.lookup);
+      }
+    });
+
+    if (loaders.size === 0) return;
+
+    setReferencesLoading(true);
+    const entries = [...loaders.entries()];
+    Promise.all(entries.map(([, loadOptions]) => loadOptions()))
+      .then((results) => {
+        const map: Record<string, ReferenceOption[]> = {};
+        entries.forEach(([key], i) => {
+          map[key] = results[i];
+        });
+        setReferenceOptions(map);
+      })
+      .catch((err) =>
+        toasts.error(
+          err instanceof ApiError ? err.message : "Failed to load reference lists",
+        ),
+      )
+      .finally(() => setReferencesLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const load = async () => {
     setLoading(true);
@@ -157,13 +200,20 @@ export function CrudPage<T extends { id: string }, TReq extends object>({
             <tbody>
               {items.map((item) => (
                 <tr key={item.id}>
-                  {columns.map((col) => (
-                    <td key={col.key} className={col.mono ? "cell-mono" : undefined}>
-                      {col.render
-                        ? col.render(item)
-                        : String((item as Record<string, unknown>)[col.key] ?? "—")}
-                    </td>
-                  ))}
+                  {columns.map((col) => {
+                    const rawValue = (item as Record<string, unknown>)[col.key];
+                    const resolved =
+                      col.lookup &&
+                      referenceOptions[col.key]?.find((o) => o.value === rawValue)?.label;
+
+                    return (
+                      <td key={col.key} className={col.mono && !resolved ? "cell-mono" : undefined}>
+                        {col.render
+                          ? col.render(item)
+                          : (resolved ?? String(rawValue ?? "—"))}
+                      </td>
+                    );
+                  })}
                   <td className="cell-actions">
                     {extraActions?.(item, load, toasts)}
                     <button
@@ -204,6 +254,22 @@ export function CrudPage<T extends { id: string }, TReq extends object>({
                     {field.options?.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
+                      </option>
+                    ))}
+                  </select>
+                ) : field.type === "reference" ? (
+                  <select
+                    required={field.required}
+                    value={(form[field.key] as string) ?? ""}
+                    onChange={(e) => setField(field.key, e.target.value)}
+                    disabled={referencesLoading}
+                  >
+                    <option value="">
+                      {referencesLoading ? "Loading…" : !field.required ? "—" : "Select…"}
+                    </option>
+                    {(referenceOptions[String(field.key)] ?? []).map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
                       </option>
                     ))}
                   </select>

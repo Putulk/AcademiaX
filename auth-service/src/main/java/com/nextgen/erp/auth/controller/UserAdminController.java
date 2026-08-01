@@ -19,15 +19,19 @@ public class UserAdminController {
 
     private final UserAdminService userAdminService;
 
+    // Read-only, open to any authenticated user (not just admins) — the
+    // User Profiles page needs this list to let non-admin roles (e.g.
+    // Management) pick a userId by name instead of pasting a raw UUID.
+    // Role assignment itself (below) stays admin-only.
     @GetMapping("/users")
-    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<UserSummaryResponse>> getAllUsers() {
 
         return ResponseEntity.ok(userAdminService.getAllUsers());
     }
 
     @GetMapping("/roles")
-    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<String>> getAllRoles() {
 
         return ResponseEntity.ok(userAdminService.getAllRoleNames());

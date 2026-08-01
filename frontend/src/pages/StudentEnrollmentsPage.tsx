@@ -1,4 +1,5 @@
 import { studentEnrollmentApi } from "../api/studentApi";
+import { loadAcademicYearOptions, loadClassSectionOptions, loadStudentOptions } from "../api/directory";
 import { CrudPage, type CrudField, type CrudColumn } from "../components/CrudPage";
 import { StatusBadge } from "../components/StatusBadge";
 import {
@@ -8,17 +9,17 @@ import {
 } from "../types/student";
 
 const columns: CrudColumn<StudentEnrollment>[] = [
-  { key: "studentId", label: "Student ID", mono: true },
-  { key: "academicYearId", label: "Academic Year ID", mono: true },
-  { key: "classSectionId", label: "Class Section ID", mono: true },
+  { key: "studentId", label: "Student", lookup: loadStudentOptions },
+  { key: "academicYearId", label: "Academic Year", lookup: loadAcademicYearOptions },
+  { key: "classSectionId", label: "Class Section", lookup: loadClassSectionOptions },
   { key: "rollNumber", label: "Roll No." },
   { key: "status", label: "Status", render: (item) => <StatusBadge value={item.status} /> },
 ];
 
 const fields: CrudField<StudentEnrollmentRequest>[] = [
-  { key: "studentId", label: "Student ID (UUID)", type: "text", required: true },
-  { key: "academicYearId", label: "Academic Year ID (UUID)", type: "text", required: true },
-  { key: "classSectionId", label: "Class Section ID (UUID)", type: "text", required: true },
+  { key: "studentId", label: "Student", type: "reference", loadOptions: loadStudentOptions, required: true },
+  { key: "academicYearId", label: "Academic Year", type: "reference", loadOptions: loadAcademicYearOptions, required: true },
+  { key: "classSectionId", label: "Class Section", type: "reference", loadOptions: loadClassSectionOptions, required: true },
   { key: "rollNumber", label: "Roll Number", type: "text", required: true },
   { key: "status", label: "Status", type: "select", options: STUDENT_STATUSES, required: true },
   { key: "active", label: "Active", type: "checkbox" },

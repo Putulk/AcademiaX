@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { examApi } from "../api/examApi";
 import { ApiError } from "../api/client";
+import { loadClassRoomOptions, type ReferenceOption } from "../api/directory";
 import { Modal } from "../components/Modal";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { StatusBadge } from "../components/StatusBadge";
@@ -26,7 +27,20 @@ export function ExamsPage() {
   const [form, setForm] = useState<ExamRequest>(EMPTY_FORM);
   const [deleteTarget, setDeleteTarget] = useState<Exam | null>(null);
   const [saving, setSaving] = useState(false);
+  const [classRooms, setClassRooms] = useState<ReferenceOption[]>([]);
   const toasts = useToasts();
+
+  useEffect(() => {
+    loadClassRoomOptions()
+      .then(setClassRooms)
+      .catch((err) =>
+        toasts.error(err instanceof ApiError ? err.message : "Failed to load classes"),
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const classRoomName = (id: string) =>
+    classRooms.find((c) => c.value === id)?.label ?? id;
 
   const load = async () => {
     setLoading(true);
@@ -125,7 +139,7 @@ export function ExamsPage() {
               <tr>
                 <th>Name</th>
                 <th>Academic Year</th>
-                <th>Class ID</th>
+                <th>Class</th>
                 <th>Start</th>
                 <th>End</th>
                 <th>Status</th>
@@ -137,7 +151,7 @@ export function ExamsPage() {
                 <tr key={exam.id}>
                   <td className="cell-strong">{exam.name}</td>
                   <td>{exam.academicYear}</td>
-                  <td className="cell-mono">{exam.classId}</td>
+                  <td>{classRoomName(exam.classId)}</td>
                   <td>{exam.startDate}</td>
                   <td>{exam.endDate}</td>
                   <td>
@@ -197,13 +211,19 @@ export function ExamsPage() {
             </div>
 
             <label>
-              Class ID (UUID)
-              <input
+              Class
+              <select
                 required
                 value={form.classId}
                 onChange={(e) => setForm({ ...form, classId: e.target.value })}
-                placeholder="00000000-0000-0000-0000-000000000000"
-              />
+              >
+                <option value="">Select…</option>
+                {classRooms.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <div className="form-row">

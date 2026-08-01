@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { userProfileApi } from "../api/userProfileApi";
+import { loadAuthUserOptions } from "../api/directory";
 import { CrudPage, type CrudField, type CrudColumn } from "../components/CrudPage";
 import { RoleAssignModal } from "../components/RoleAssignModal";
 import { StatusBadge } from "../components/StatusBadge";
@@ -9,7 +10,7 @@ import { GENDERS, type UserProfile, type UserProfileRequest } from "../types/use
 const columns: CrudColumn<UserProfile>[] = [
   { key: "firstName", label: "First Name" },
   { key: "lastName", label: "Last Name" },
-  { key: "userId", label: "User ID", mono: true },
+  { key: "userId", label: "Login", lookup: loadAuthUserOptions },
   { key: "phone", label: "Phone" },
   {
     key: "active",
@@ -19,7 +20,7 @@ const columns: CrudColumn<UserProfile>[] = [
 ];
 
 const fields: CrudField<UserProfileRequest>[] = [
-  { key: "userId", label: "User ID (UUID, from auth-service)", type: "text", required: true },
+  { key: "userId", label: "User (from auth-service)", type: "reference", loadOptions: loadAuthUserOptions, required: true },
   { key: "firstName", label: "First Name", type: "text", required: true },
   { key: "lastName", label: "Last Name", type: "text", required: true },
   { key: "phone", label: "Phone", type: "text" },

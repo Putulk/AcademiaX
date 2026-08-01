@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "ACADEMIC-MANAGEMENT-SERVICE")
+@FeignClient(name = "ACADEMIC-MANAGEMENT")
 public interface AcademicClient {
 
     @GetMapping("/api/v1/classes/{id}/exists")

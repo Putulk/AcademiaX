@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { ApiError } from "../api/client";
 import { RoleAssignModal } from "../components/RoleAssignModal";
 import { StatusBadge } from "../components/StatusBadge";
 import { ToastStack } from "../components/Toast";
 import { useToasts } from "../hooks/useToasts";
-import { useAuth } from "../auth/AuthContext";
 import type { UserSummary } from "../types/auth";
 
 export function UsersRolesPage() {
-  const auth = useAuth();
   const [users, setUsers] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [managing, setManaging] = useState<UserSummary | null>(null);
@@ -35,10 +32,6 @@ export function UsersRolesPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (!auth.isAdmin) {
-    return <Navigate to="/exams" replace />;
-  }
 
   return (
     <div>

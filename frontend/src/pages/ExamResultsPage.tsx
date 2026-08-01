@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { examApi } from "../api/examApi";
 import { examResultApi } from "../api/examResultApi";
 import { ApiError } from "../api/client";
+import {
+  loadStudentEnrollmentOptions,
+  loadSubjectOptions,
+  type ReferenceOption,
+} from "../api/directory";
 import { Modal } from "../components/Modal";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { StatusBadge } from "../components/StatusBadge";
@@ -30,6 +35,8 @@ export function ExamResultsPage() {
   const [form, setForm] = useState<ExamResultRequest>(emptyForm(""));
   const [deleteTarget, setDeleteTarget] = useState<ExamResult | null>(null);
   const [saving, setSaving] = useState(false);
+  const [studentEnrollments, setStudentEnrollments] = useState<ReferenceOption[]>([]);
+  const [subjects, setSubjects] = useState<ReferenceOption[]>([]);
   const toasts = useToasts();
 
   useEffect(() => {
@@ -42,8 +49,22 @@ export function ExamResultsPage() {
       .catch((err) =>
         toasts.error(err instanceof ApiError ? err.message : "Failed to load exams"),
       );
+
+    Promise.all([loadStudentEnrollmentOptions(), loadSubjectOptions()])
+      .then(([enrollments, subj]) => {
+        setStudentEnrollments(enrollments);
+        setSubjects(subj);
+      })
+      .catch((err) =>
+        toasts.error(
+          err instanceof ApiError ? err.message : "Failed to load reference lists",
+        ),
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const nameOf = (options: ReferenceOption[], id: string) =>
+    options.find((o) => o.value === id)?.label ?? id;
 
   const loadResults = async (examId: string, studentEnrollmentId: string) => {
     if (!examId) {
@@ -159,13 +180,21 @@ export function ExamResultsPage() {
         </label>
 
         <label>
-          Filter by Student Enrollment ID (result card)
-          <input
+          Filter by Student (result card)
+          <select
             value={studentFilter}
-            onChange={(e) => setStudentFilter(e.target.value)}
-            onBlur={() => loadResults(selectedExamId, studentFilter)}
-            placeholder="Leave blank to see all students"
-          />
+            onChange={(e) => {
+              setStudentFilter(e.target.value);
+              loadResults(selectedExamId, e.target.value);
+            }}
+          >
+            <option value="">All students</option>
+            {studentEnrollments.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
 
@@ -191,8 +220,8 @@ export function ExamResultsPage() {
             <tbody>
               {results.map((result) => (
                 <tr key={result.id}>
-                  <td className="cell-mono">{result.studentEnrollmentId}</td>
-                  <td className="cell-mono">{result.subjectId}</td>
+                  <td>{nameOf(studentEnrollments, result.studentEnrollmentId)}</td>
+                  <td>{nameOf(subjects, result.subjectId)}</td>
                   <td>
                     {result.marksObtained} / {result.maxMarks}
                   </td>
@@ -234,22 +263,36 @@ export function ExamResultsPage() {
         >
           <form onSubmit={submit} className="form">
             <label>
-              Student Enrollment ID (UUID)
-              <input
+              Student Enrollment
+              <select
                 required
                 value={form.studentEnrollmentId}
                 onChange={(e) =>
                   setForm({ ...form, studentEnrollmentId: e.target.value })
                 }
-              />
+              >
+                <option value="">Select…</option>
+                {studentEnrollments.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
             </label>
             <label>
-              Subject ID (UUID)
-              <input
+              Subject
+              <select
                 required
                 value={form.subjectId}
                 onChange={(e) => setForm({ ...form, subjectId: e.target.value })}
-              />
+              >
+                <option value="">Select…</option>
+                {subjects.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="checkbox-row">

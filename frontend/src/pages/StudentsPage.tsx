@@ -1,4 +1,5 @@
 import { studentApi } from "../api/studentApi";
+import { loadClassRoomOptions, loadSectionOptions, loadUserProfileOptions } from "../api/directory";
 import { CrudPage, type CrudField, type CrudColumn } from "../components/CrudPage";
 import { StatusBadge } from "../components/StatusBadge";
 import {
@@ -11,6 +12,7 @@ import {
 } from "../types/student";
 
 const columns: CrudColumn<Student>[] = [
+  { key: "userProfileId", label: "Name", lookup: loadUserProfileOptions },
   { key: "admissionNumber", label: "Admission No." },
   { key: "rollNumber", label: "Roll No." },
   { key: "academicYear", label: "Academic Year" },
@@ -19,9 +21,9 @@ const columns: CrudColumn<Student>[] = [
 ];
 
 const fields: CrudField<StudentRequest>[] = [
-  { key: "userProfileId", label: "User Profile ID (UUID)", type: "text", required: true },
-  { key: "classId", label: "Class ID (UUID, optional)", type: "text" },
-  { key: "sectionId", label: "Section ID (UUID, optional)", type: "text" },
+  { key: "userProfileId", label: "User Profile", type: "reference", loadOptions: loadUserProfileOptions, required: true },
+  { key: "classId", label: "Class (optional)", type: "reference", loadOptions: loadClassRoomOptions },
+  { key: "sectionId", label: "Section (optional)", type: "reference", loadOptions: loadSectionOptions },
   { key: "admissionNumber", label: "Admission Number", type: "text", required: true },
   { key: "rollNumber", label: "Roll Number", type: "text", required: true },
   { key: "academicYear", label: "Academic Year", type: "text", required: true, placeholder: "2026-2027" },

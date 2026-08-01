@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { examApi } from "../api/examApi";
 import { examScheduleApi } from "../api/examScheduleApi";
 import { ApiError } from "../api/client";
+import {
+  loadClassRoomOptions,
+  loadSectionOptions,
+  loadSubjectOptions,
+  loadTeacherOptions,
+  type ReferenceOption,
+} from "../api/directory";
 import { Modal } from "../components/Modal";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { ToastStack } from "../components/Toast";
@@ -32,6 +39,10 @@ export function ExamSchedulesPage() {
   const [form, setForm] = useState<ExamScheduleRequest>(emptyForm(""));
   const [deleteTarget, setDeleteTarget] = useState<ExamSchedule | null>(null);
   const [saving, setSaving] = useState(false);
+  const [subjects, setSubjects] = useState<ReferenceOption[]>([]);
+  const [teachers, setTeachers] = useState<ReferenceOption[]>([]);
+  const [classRooms, setClassRooms] = useState<ReferenceOption[]>([]);
+  const [sections, setSections] = useState<ReferenceOption[]>([]);
   const toasts = useToasts();
 
   useEffect(() => {
@@ -44,8 +55,29 @@ export function ExamSchedulesPage() {
       .catch((err) =>
         toasts.error(err instanceof ApiError ? err.message : "Failed to load exams"),
       );
+
+    Promise.all([
+      loadSubjectOptions(),
+      loadTeacherOptions(),
+      loadClassRoomOptions(),
+      loadSectionOptions(),
+    ])
+      .then(([s, t, c, sec]) => {
+        setSubjects(s);
+        setTeachers(t);
+        setClassRooms(c);
+        setSections(sec);
+      })
+      .catch((err) =>
+        toasts.error(
+          err instanceof ApiError ? err.message : "Failed to load reference lists",
+        ),
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const nameOf = (options: ReferenceOption[], id: string) =>
+    options.find((o) => o.value === id)?.label ?? id;
 
   const loadSchedules = async (examId: string) => {
     if (!examId) {
@@ -173,9 +205,9 @@ export function ExamSchedulesPage() {
           <table className="table">
             <thead>
               <tr>
-                <th>Subject ID</th>
-                <th>Teacher ID</th>
-                <th>Section ID</th>
+                <th>Subject</th>
+                <th>Teacher</th>
+                <th>Section</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Room</th>
@@ -186,9 +218,9 @@ export function ExamSchedulesPage() {
             <tbody>
               {schedules.map((schedule) => (
                 <tr key={schedule.id}>
-                  <td className="cell-mono">{schedule.subjectId}</td>
-                  <td className="cell-mono">{schedule.teacherId}</td>
-                  <td className="cell-mono">{schedule.sectionId}</td>
+                  <td>{nameOf(subjects, schedule.subjectId)}</td>
+                  <td>{nameOf(teachers, schedule.teacherId)}</td>
+                  <td>{nameOf(sections, schedule.sectionId)}</td>
                   <td>{schedule.examDate}</td>
                   <td>
                     {schedule.startTime}–{schedule.endTime}
@@ -225,37 +257,65 @@ export function ExamSchedulesPage() {
         >
           <form onSubmit={submit} className="form">
             <label>
-              Subject ID (UUID)
-              <input
+              Subject
+              <select
                 required
                 value={form.subjectId}
                 onChange={(e) => setForm({ ...form, subjectId: e.target.value })}
-              />
+              >
+                <option value="">Select…</option>
+                {subjects.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
             </label>
             <label>
-              Teacher ID (UUID)
-              <input
+              Teacher
+              <select
                 required
                 value={form.teacherId}
                 onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
-              />
+              >
+                <option value="">Select…</option>
+                {teachers.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
             </label>
             <div className="form-row">
               <label>
-                Class ID (UUID)
-                <input
+                Class
+                <select
                   required
                   value={form.classId}
                   onChange={(e) => setForm({ ...form, classId: e.target.value })}
-                />
+                >
+                  <option value="">Select…</option>
+                  {classRooms.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label>
-                Section ID (UUID)
-                <input
+                Section
+                <select
                   required
                   value={form.sectionId}
                   onChange={(e) => setForm({ ...form, sectionId: e.target.value })}
-                />
+                >
+                  <option value="">Select…</option>
+                  {sections.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
 
