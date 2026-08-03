@@ -17,6 +17,8 @@ import { AttendancePage } from "./pages/AttendancePage";
 import { ExamsPage } from "./pages/ExamsPage";
 import { ExamSchedulesPage } from "./pages/ExamSchedulesPage";
 import { ExamResultsPage } from "./pages/ExamResultsPage";
+import { EntityDefinitionsPage } from "./pages/EntityDefinitionsPage";
+import { EntityRecordsPage } from "./pages/EntityRecordsPage";
 
 function App() {
   return (
@@ -64,6 +66,9 @@ function App() {
           <Route path="/schedules" element={<ExamSchedulesPage />} />
           <Route path="/results" element={<ExamResultsPage />} />
         </Route>
+
+        <Route path="/entity-definitions" element={<EntityDefinitionsPage />} />
+        <Route path="/entities/:entityDefinitionId" element={<EntityRecordsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

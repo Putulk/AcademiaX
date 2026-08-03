@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { getAllowedSections, type SectionKey } from "../auth/permissions";
 import { StatusBadge } from "./StatusBadge";
+import { entityDefinitionApi } from "../api/platformApi";
+import type { EntityDefinition } from "../types/platform";
 
 interface NavItem {
   to: string;
@@ -64,6 +67,15 @@ const ALL_NAV_SECTIONS: NavSection[] = [
 export function Layout() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [entityDefinitions, setEntityDefinitions] = useState<EntityDefinition[]>([]);
+
+  useEffect(() => {
+    // Records is a new, separate platform-core-backed capability — not part
+    // of the fixed role→section model (permissions.ts) the rest of the app
+    // uses, so a failure here (e.g. platform-core not running) shouldn't
+    // break the rest of the sidebar.
+    entityDefinitionApi.list().then(setEntityDefinitions).catch(() => setEntityDefinitions([]));
+  }, []);
 
   const handleLogout = () => {
     auth.logout();
@@ -77,6 +89,8 @@ export function Layout() {
   const navSections = ALL_NAV_SECTIONS.filter((section) =>
     allowedSections.has(section.heading),
   );
+
+  const showRecordsSection = auth.isAdmin || entityDefinitions.length > 0;
 
   return (
     <div className="app-shell">
@@ -104,6 +118,35 @@ export function Layout() {
               ))}
             </div>
           ))}
+
+          {showRecordsSection && (
+            <div className="sidebar__section">
+              <div className="sidebar__heading">Records</div>
+              {auth.isAdmin && (
+                <NavLink
+                  to="/entity-definitions"
+                  className={({ isActive }) =>
+                    `sidebar__link${isActive ? " sidebar__link--active" : ""}`
+                  }
+                >
+                  <span className="sidebar__icon">🧬</span>
+                  Entity Definitions
+                </NavLink>
+              )}
+              {entityDefinitions.map((def) => (
+                <NavLink
+                  key={def.id}
+                  to={`/entities/${def.id}`}
+                  className={({ isActive }) =>
+                    `sidebar__link${isActive ? " sidebar__link--active" : ""}`
+                  }
+                >
+                  <span className="sidebar__icon">📦</span>
+                  {def.pluralLabel}
+                </NavLink>
+              ))}
+            </div>
+          )}
         </nav>
 
         <div className="sidebar__footer">

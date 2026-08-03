@@ -18,7 +18,7 @@ function isWrapped<T>(body: unknown): body is ApiResponse<T> {
   );
 }
 
-export function createApiClient(baseUrl: string) {
+export function createApiClient(baseUrl: string, defaultHeaders?: Record<string, string>) {
   async function request<T>(path: string, options?: RequestInit): Promise<T> {
     const token = localStorage.getItem("accessToken");
 
@@ -26,6 +26,7 @@ export function createApiClient(baseUrl: string) {
       headers: {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...defaultHeaders,
       },
       ...options,
     });

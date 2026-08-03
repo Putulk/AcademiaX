@@ -8,4 +8,6 @@ export const SERVICE_URLS = {
     import.meta.env.VITE_ATTENDANCE_API_BASE_URL ?? "http://localhost:8087",
   examination:
     import.meta.env.VITE_EXAMINATION_API_BASE_URL ?? "http://localhost:8088",
+  platform:
+    import.meta.env.VITE_PLATFORM_API_BASE_URL ?? "http://localhost:8089",
 };
