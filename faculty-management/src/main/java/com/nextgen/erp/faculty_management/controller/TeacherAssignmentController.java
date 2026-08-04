@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class TeacherAssignmentController {
             summary = "Create Teacher Assignment",
             description = "Assign a teacher to a subject, class section and academic year."
     )
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER','HR')")
     @PostMapping
     public ResponseEntity<ApiResponse<TeacherAssignmentResponse>> create(
             @Valid @RequestBody TeacherAssignmentRequest request) {
@@ -73,6 +75,7 @@ public class TeacherAssignmentController {
     }
 
     @Operation(summary = "Update Teacher Assignment")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER','HR')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<TeacherAssignmentResponse>> update(
             @PathVariable UUID id,
@@ -90,6 +93,7 @@ public class TeacherAssignmentController {
     }
 
     @Operation(summary = "Delete Teacher Assignment")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER','HR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id) {

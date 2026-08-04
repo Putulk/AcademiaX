@@ -7,6 +7,7 @@ import com.nextgen.erp.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @PostMapping
     public ResponseEntity<ApiResponse<AttendanceResponse>> createAttendance(
             @Valid @RequestBody AttendanceRequest request) {
@@ -29,6 +31,7 @@ public class AttendanceController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AttendanceResponse>> updateAttendance(
             @PathVariable UUID id,
@@ -86,6 +89,7 @@ public class AttendanceController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteAttendance(
             @PathVariable UUID id) {

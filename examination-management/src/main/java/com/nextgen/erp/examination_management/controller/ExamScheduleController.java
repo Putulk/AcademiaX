@@ -7,6 +7,7 @@ import com.nextgen.erp.examination_management.service.ExamScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class ExamScheduleController {
 
     private final ExamScheduleService examScheduleService;
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @PostMapping
     public ResponseEntity<ApiResponse<ExamScheduleResponse>> createSchedule(
             @Valid @RequestBody ExamScheduleRequest request) {
@@ -31,6 +33,7 @@ public class ExamScheduleController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ExamScheduleResponse>> updateSchedule(
             @PathVariable UUID id,
@@ -130,6 +133,7 @@ public class ExamScheduleController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteSchedule(
             @PathVariable UUID id) {

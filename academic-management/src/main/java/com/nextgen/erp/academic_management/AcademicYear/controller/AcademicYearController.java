@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class AcademicYearController {
     private final AcademicYearService service;
 
     @Operation(summary = "Create Academic Year")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PostMapping
     public ResponseEntity<ApiResponse<AcademicYearResponse>> create(
             @Valid @RequestBody AcademicYearRequest request) {
@@ -46,6 +48,7 @@ public class AcademicYearController {
         return service.getAll();
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PutMapping("/{id}")
     public AcademicYearResponse update(
             @PathVariable UUID id,
@@ -54,12 +57,14 @@ public class AcademicYearController {
         return service.update(id, request);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         service.delete(id);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PatchMapping("/{id}/activate")
     public AcademicYearResponse activate(@PathVariable UUID id) {
         return service.activate(id);

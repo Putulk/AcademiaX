@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ClassSectionController {
     private final ClassSectionService service;
 
     @Operation(summary = "Create Class Section")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PostMapping
     public ResponseEntity<ApiResponse<ClassSectionResponse>> create(
             @Valid @RequestBody ClassSectionRequest request) {
@@ -46,6 +48,7 @@ public class ClassSectionController {
         return service.getAll();
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PutMapping("/{id}")
     public ClassSectionResponse update(
             @PathVariable UUID id,
@@ -54,6 +57,7 @@ public class ClassSectionController {
         return service.update(id, request);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class SubjectController {
             summary = "Create Subject",
             description = "Creates a new subject"
     )
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PostMapping
     public ResponseEntity<ApiResponse<SubjectResponse>> create(
             @Valid @RequestBody SubjectRequest request) {
@@ -71,6 +73,7 @@ public class SubjectController {
     }
 
     @Operation(summary = "Update Subject")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<SubjectResponse>> update(
             @PathVariable UUID id,
@@ -88,6 +91,7 @@ public class SubjectController {
     }
 
     @Operation(summary = "Delete Subject")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id) {

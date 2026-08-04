@@ -27,15 +27,13 @@ Runs at `http://localhost:3000`. You'll land on `/login`. Either register a new 
 - `SectionGuard` — wraps each module's routes; redirects to `/no-access` if your role(s) don't grant that section (see `src/auth/permissions.ts` for the role → section table, and `DESIGN.md` for the reasoning).
 - `HomeRedirect` — the index route; sends you to the first section your role can see, or `/no-access` if none.
 
-This is a **frontend-only** gate: the token comes from a real `auth-service` login, and the API client (`src/api/client.ts`) does attach it as `Authorization: Bearer <token>` on every request — but only `auth-service`'s own admin endpoints (`GET /api/v1/auth/users`, `GET /api/v1/auth/roles`, `PUT /api/v1/auth/users/{id}/roles`) actually check it. None of the six business services validate the token themselves, so nothing stops a direct API call from bypassing the role gate entirely — it controls what the UI shows, not what the backend allows.
+This is a **frontend-only** gate for navigation/section visibility: the token comes from a real `auth-service` login, and the API client (`src/api/client.ts`) attaches it as `Authorization: Bearer <token>` on every request. As of the backend security-hardening pass, every business service validates that token itself (see the root `README.md`'s Security model section) — so a direct API call now needs a real, valid token too. What's still **not** enforced anywhere is *role*-based authorization: any authenticated user can call any business-service endpoint regardless of role, so the sidebar/route gating here still only controls what the UI *shows*, not what the backend *allows*.
 
 ## Architecture note: this UI talks to each service directly, not through the gateway
 
 Each module has its own base URL (see `.env.example` / `src/api/serviceUrls.ts`), and each backend service has its own `CorsConfig` allowing `localhost:3000`/`5173`.
 
-Why not go through `api-gateway` (port 8080) for everything? Two reasons discovered while building this:
-1. Two of the gateway's route predicates don't match the actual controller paths — `academic-management`'s predicate is `Path=/api/v1/academic/**` but its controllers are at `/api/v1/academic-years`, `/api/v1/classes`, etc; `examination-management`'s predicate is `/api/v1/examination/**` but its controllers are at `/api/v1/exams`, etc. Both are unreachable through the gateway as currently configured.
-2. The gateway enforces a JWT filter on every route except `/api/v1/auth/**` — but only `auth-service` itself validates that JWT beyond the gateway. Calling services directly, as this app does, sidesteps needing every request to carry a token the target service doesn't check anyway.
+Historically this was also a workaround for two gateway bugs (broken route predicates for `academic-management`/`examination-management`, and a JWT filter guarding routes that nothing behind it validated) — both are now fixed. The app still calls services directly rather than through the gateway: since every business service now enforces its own JWT check independently, routing through the gateway wouldn't add security, just a network hop. Switching to gateway-routed calls is a possible future simplification (single base URL, one CORS config to maintain) but hasn't been done — it'd mean touching every page's API base URL for no functional gain today.
 
 ## Ports (also in `.env.example`)
 
@@ -48,6 +46,7 @@ Why not go through `api-gateway` (port 8080) for everything? Two reasons discove
 | faculty-management | 8085 |
 | attendance-management | 8087 |
 | examination-management | 8088 |
+| platform-core | 8089 |
 
 ## Project structure
 

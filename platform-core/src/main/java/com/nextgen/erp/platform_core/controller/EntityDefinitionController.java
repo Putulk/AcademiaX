@@ -9,6 +9,7 @@ import com.nextgen.erp.platform_core.service.EntityDefinitionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class EntityDefinitionController {
 
     private final EntityDefinitionService entityDefinitionService;
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse<EntityDefinitionResponse>> create(
             @RequestHeader("X-Tenant-Id") UUID tenantId,
@@ -48,6 +50,7 @@ public class EntityDefinitionController {
                 ApiResponse.success(entityDefinitionService.listDefinitions(tenantId)));
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EntityDefinitionResponse>> update(
             @RequestHeader("X-Tenant-Id") UUID tenantId,
@@ -59,6 +62,7 @@ public class EntityDefinitionController {
                         entityDefinitionService.updateDefinition(tenantId, id, request)));
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(
             @RequestHeader("X-Tenant-Id") UUID tenantId,
@@ -69,6 +73,7 @@ public class EntityDefinitionController {
         return ResponseEntity.ok(ApiResponse.success("Entity definition deleted successfully"));
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PostMapping("/{id}/fields")
     public ResponseEntity<ApiResponse<FieldDefinitionResponse>> addField(
             @RequestHeader("X-Tenant-Id") UUID tenantId,
@@ -88,6 +93,7 @@ public class EntityDefinitionController {
                 ApiResponse.success(entityDefinitionService.listFields(tenantId, id)));
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PutMapping("/{id}/fields/{fieldId}")
     public ResponseEntity<ApiResponse<FieldDefinitionResponse>> updateField(
             @RequestHeader("X-Tenant-Id") UUID tenantId,
@@ -100,6 +106,7 @@ public class EntityDefinitionController {
                         entityDefinitionService.updateField(tenantId, id, fieldId, request)));
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @DeleteMapping("/{id}/fields/{fieldId}")
     public ResponseEntity<ApiResponse<String>> deleteField(
             @RequestHeader("X-Tenant-Id") UUID tenantId,

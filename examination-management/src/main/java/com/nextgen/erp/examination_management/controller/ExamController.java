@@ -7,6 +7,7 @@ import com.nextgen.erp.examination_management.service.ExamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ExamController {
 
     private final ExamService examService;
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @PostMapping
     public ResponseEntity<ApiResponse<ExamResponse>> createExam(
             @Valid @RequestBody ExamRequest request) {
@@ -30,6 +32,7 @@ public class ExamController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ExamResponse>> updateExam(
             @PathVariable UUID id,
@@ -88,6 +91,7 @@ public class ExamController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteExam(
             @PathVariable UUID id) {

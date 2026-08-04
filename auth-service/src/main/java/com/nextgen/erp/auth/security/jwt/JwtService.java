@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -49,7 +51,13 @@ public class JwtService {
     private String generateToken(CustomUserDetails userDetails,
                                  long expiration) {
 
+        List<String> roles = userDetails.getUser().getRoles().stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toList());
+
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userDetails.getUserId().toString());
+        claims.put("roles", roles);
 
         return Jwts.builder()
                 .claims(claims)

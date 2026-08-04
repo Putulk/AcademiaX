@@ -26,7 +26,7 @@ spring:
         - id: academic-management
           uri: lb://ACADEMIC-MANAGEMENT
           predicates:
-            - Path=/api/v1/academic/**
+            - Path=/api/v1/academic-years/**,/api/v1/sections/**,/api/v1/subjects/**,/api/v1/classes/**,/api/v1/class-sections/**
 
         - id: faculty-management
           uri: lb://FACULTY-MANAGEMENT
@@ -41,7 +41,12 @@ spring:
         - id: examination-management
           uri: lb://EXAMINATION-MANAGEMENT-SERVICE
           predicates:
-            - Path=/api/v1/examination/**
+            - Path=/api/v1/exams/**,/api/v1/exam-schedules/**,/api/v1/exam-results/**
+
+        - id: platform-core
+          uri: lb://PLATFORM-CORE-SERVICE
+          predicates:
+            - Path=/api/v1/platform/**
 
       globalcors:
         corsConfigurations:
@@ -63,14 +68,14 @@ spring:
         connect-timeout: 5000
         response-timeout: 10s
 jwt:
-  secret: 4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f
+  secret: ${JWT_SECRET:4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
   expiration: 86400000
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info
   endpoint:
     gateway:
       access: unrestricted

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,6 +53,7 @@ public class UserProfileController {
                     description = "Internal server error"
             )
     })
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PostMapping
     public ResponseEntity<ApiResponse<UserProfileResponse>> createUser(
             @Valid @RequestBody UserProfileRequest request) {
@@ -101,6 +103,7 @@ public class UserProfileController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserProfileResponse>> updateUser(
             @PathVariable UUID userId,
@@ -117,6 +120,7 @@ public class UserProfileController {
     }
 
     @Operation(summary = "Delete User")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(
             @PathVariable UUID userId) {
@@ -131,6 +135,7 @@ public class UserProfileController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT')")
     @PostMapping(
             value = "/{userId}/profile-image",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE

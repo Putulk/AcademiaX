@@ -23,8 +23,6 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        System.out.println("Incoming Request : " + path);
-
         if (path.startsWith("/api/v1/auth")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")
@@ -37,11 +35,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION);
 
-        System.out.println("Authorization : " + authHeader);
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-
-            System.out.println("Authorization Header Missing");
 
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
@@ -49,11 +43,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
 
-        System.out.println("Token : " + token);
-
         boolean valid = jwtUtil.validateToken(token);
-
-        System.out.println("JWT Valid : " + valid);
 
         if (!valid) {
 

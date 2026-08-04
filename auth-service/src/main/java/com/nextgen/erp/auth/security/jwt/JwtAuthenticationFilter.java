@@ -29,14 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        System.out.println("========== JWT FILTER ==========");
-        System.out.println("URI : " + request.getRequestURI());
-
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("Authorization Header : " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("No Bearer token found");
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,10 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
 
             String jwt = authHeader.substring(7);
-            System.out.println("JWT : " + jwt);
-
             String email = jwtService.extractUsername(jwt);
-            System.out.println("Email : " + email);
 
             if (email != null &&
                     SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -55,12 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails =
                         userDetailsService.loadUserByUsername(email);
 
-                System.out.println("Authorities : "
-                        + userDetails.getAuthorities());
-
                 if (jwtService.isTokenValid(jwt,(CustomUserDetails)userDetails)) {
-
-                    System.out.println("JWT VALID");
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
@@ -74,15 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext()
                             .setAuthentication(authentication);
-
-                    System.out.println("Authentication Set");
-                } else {
-                    System.out.println("JWT INVALID");
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);

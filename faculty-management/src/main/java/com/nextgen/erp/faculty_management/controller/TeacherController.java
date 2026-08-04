@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER','HR')")
     @PostMapping
     public ResponseEntity<ApiResponse<TeacherResponse>> create(
             @Valid @RequestBody TeacherRequest request) {
@@ -57,6 +59,7 @@ public class TeacherController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER','HR')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<TeacherResponse>> update(
             @PathVariable UUID id,
@@ -70,6 +73,7 @@ public class TeacherController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGEMENT','TEACHER','HR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id) {
