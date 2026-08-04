@@ -6,6 +6,8 @@ import com.nextgen.erp.platform_core.entity.EntityDefinition;
 import com.nextgen.erp.platform_core.entity.EntityRecord;
 import com.nextgen.erp.platform_core.entity.FieldDefinition;
 import com.nextgen.erp.platform_core.enums.DataType;
+import com.nextgen.erp.platform_core.exception.ResourceNotFoundException;
+import com.nextgen.erp.platform_core.exception.ValidationException;
 import com.nextgen.erp.platform_core.mapper.EntityRecordMapper;
 import com.nextgen.erp.platform_core.repository.EntityDefinitionRepository;
 import com.nextgen.erp.platform_core.repository.EntityRecordRepository;
@@ -97,14 +99,14 @@ public class EntityRecordServiceImpl implements EntityRecordService {
 
         return entityDefinitionRepository.findByIdAndTenantId(entityDefinitionId, tenantId)
                 .orElseThrow(() ->
-                        new RuntimeException("Entity definition not found: " + entityDefinitionId));
+                        new ResourceNotFoundException("Entity definition not found: " + entityDefinitionId));
     }
 
     private EntityRecord findRecord(UUID tenantId, UUID entityDefinitionId, UUID id) {
 
         return entityRecordRepository
                 .findByIdAndEntityDefinitionIdAndTenantId(id, entityDefinitionId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Record not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Record not found: " + id));
     }
 
     private void validateData(UUID tenantId, UUID entityDefinitionId, Map<String, Object> data) {
@@ -119,7 +121,7 @@ public class EntityRecordServiceImpl implements EntityRecordService {
             if (Boolean.TRUE.equals(field.getRequired())
                     && (value == null || (value instanceof String s && s.isBlank()))) {
 
-                throw new RuntimeException("Field '" + field.getLabel() + "' is required.");
+                throw new ValidationException("Field '" + field.getLabel() + "' is required.");
             }
 
             if (value == null) {
@@ -136,14 +138,14 @@ public class EntityRecordServiceImpl implements EntityRecordService {
 
             case NUMBER -> {
                 if (!(value instanceof Number)) {
-                    throw new RuntimeException(
+                    throw new ValidationException(
                             "Field '" + field.getLabel() + "' must be a number.");
                 }
             }
 
             case BOOLEAN -> {
                 if (!(value instanceof Boolean)) {
-                    throw new RuntimeException(
+                    throw new ValidationException(
                             "Field '" + field.getLabel() + "' must be true or false.");
                 }
             }
@@ -151,7 +153,7 @@ public class EntityRecordServiceImpl implements EntityRecordService {
             case ENUM -> {
                 List<String> options = field.getEnumOptions();
                 if (options == null || !options.contains(value.toString())) {
-                    throw new RuntimeException(
+                    throw new ValidationException(
                             "Field '" + field.getLabel() + "' must be one of: " + options);
                 }
             }
@@ -161,7 +163,7 @@ public class EntityRecordServiceImpl implements EntityRecordService {
                 try {
                     referencedId = UUID.fromString(value.toString());
                 } catch (IllegalArgumentException e) {
-                    throw new RuntimeException(
+                    throw new ValidationException(
                             "Field '" + field.getLabel() + "' must be a valid record ID.");
                 }
 
@@ -169,7 +171,7 @@ public class EntityRecordServiceImpl implements EntityRecordService {
                         referencedId, field.getReferenceTargetEntityDefinitionId(), tenantId);
 
                 if (!exists) {
-                    throw new RuntimeException(
+                    throw new ValidationException(
                             "Field '" + field.getLabel() + "' references a record that doesn't exist.");
                 }
             }

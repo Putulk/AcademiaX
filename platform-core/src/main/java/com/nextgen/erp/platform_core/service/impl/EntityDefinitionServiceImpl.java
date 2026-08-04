@@ -7,6 +7,9 @@ import com.nextgen.erp.platform_core.dto.response.FieldDefinitionResponse;
 import com.nextgen.erp.platform_core.entity.EntityDefinition;
 import com.nextgen.erp.platform_core.entity.FieldDefinition;
 import com.nextgen.erp.platform_core.enums.DataType;
+import com.nextgen.erp.platform_core.exception.ResourceAlreadyExistsException;
+import com.nextgen.erp.platform_core.exception.ResourceNotFoundException;
+import com.nextgen.erp.platform_core.exception.ValidationException;
 import com.nextgen.erp.platform_core.mapper.EntityDefinitionMapper;
 import com.nextgen.erp.platform_core.mapper.FieldDefinitionMapper;
 import com.nextgen.erp.platform_core.repository.EntityDefinitionRepository;
@@ -33,7 +36,7 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
     public EntityDefinitionResponse createDefinition(UUID tenantId, EntityDefinitionRequest request) {
 
         if (entityDefinitionRepository.existsByTenantIdAndName(tenantId, request.name())) {
-            throw new RuntimeException(
+            throw new ResourceAlreadyExistsException(
                     "An entity named '" + request.name() + "' already exists for this tenant.");
         }
 
@@ -117,7 +120,7 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 
         FieldDefinition field = fieldDefinitionRepository
                 .findByIdAndEntityDefinitionId(fieldId, entityDefinitionId)
-                .orElseThrow(() -> new RuntimeException("Field not found: " + fieldId));
+                .orElseThrow(() -> new ResourceNotFoundException("Field not found: " + fieldId));
 
         field.setName(request.name());
         field.setLabel(request.label());
@@ -137,7 +140,7 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 
         FieldDefinition field = fieldDefinitionRepository
                 .findByIdAndEntityDefinitionId(fieldId, entityDefinitionId)
-                .orElseThrow(() -> new RuntimeException("Field not found: " + fieldId));
+                .orElseThrow(() -> new ResourceNotFoundException("Field not found: " + fieldId));
 
         fieldDefinitionRepository.delete(field);
     }
@@ -145,7 +148,7 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
     private EntityDefinition findDefinition(UUID tenantId, UUID id) {
 
         return entityDefinitionRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new RuntimeException("Entity definition not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Entity definition not found: " + id));
     }
 
     private void validateFieldRequest(FieldDefinitionRequest request) {
@@ -153,14 +156,14 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
         if (request.dataType() == DataType.REFERENCE
                 && request.referenceTargetEntityDefinitionId() == null) {
 
-            throw new RuntimeException(
+            throw new ValidationException(
                     "A REFERENCE field requires a referenceTargetEntityDefinitionId.");
         }
 
         if (request.dataType() == DataType.ENUM
                 && (request.enumOptions() == null || request.enumOptions().isEmpty())) {
 
-            throw new RuntimeException("An ENUM field requires at least one enum option.");
+            throw new ValidationException("An ENUM field requires at least one enum option.");
         }
     }
 }
