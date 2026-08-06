@@ -1,0 +1,248 @@
+
+
+# No top-level `version:` key — obsolete under the current Compose Specification.
+#
+# First build: `docker buildx bake && docker compose up -d`
+# (bake guarantees the shared Maven build stage in Dockerfile runs exactly
+# once even on a cold cache; after that, plain `docker compose up --build`
+# is fine since the layer cache is warm).
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-changeme}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD:-changeme}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  eureka-server:
+    image: academiax/eureka-server:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: eureka-server
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+
+  api-gateway:
+    image: academiax/api-gateway:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-gateway
+    restart: unless-stopped
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      EUREKA_HOST: eureka-server
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8080:8080"
+
+  auth-service:
+    image: academiax/auth-service:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: auth-service
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8081:8081"
+
+  user-management:
+    image: academiax/user-management:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: user-management
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8082:8082"
+    volumes:
+      - user-management-uploads:/app/uploads/profile-images
+
+  student-management:
+    image: academiax/student-management:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: student-management
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      USER_MANAGEMENT_HOST: user-management
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8083:8083"
+    volumes:
+      - student-management-uploads:/app/uploads/profile-images
+
+  academic-management:
+    image: academiax/academic-management:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: academic-management
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8084:8084"
+
+  faculty-management:
+    image: academiax/faculty-management:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: faculty-management
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      API_GATEWAY_HOST: api-gateway
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8085:8085"
+    volumes:
+      - faculty-management-uploads:/app/uploads/profile-images
+
+  attendance-management:
+    image: academiax/attendance-management:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: attendance-management
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      USER_MANAGEMENT_HOST: user-management
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8087:8087"
+    volumes:
+      - attendance-management-uploads:/app/uploads/profile-images
+
+  examination-management:
+    image: academiax/examination-management:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: examination-management
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8088:8088"
+
+  platform-core:
+    image: academiax/platform-core:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: platform-core
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      EUREKA_HOST: eureka-server
+      JWT_SECRET: ${JWT_SECRET:-4eab74d923edcecae9839fb51a6b4b2d0b5d748b73d9421af74d6f7a8d7c3e9f}
+    ports:
+      - "8089:8089"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - auth-service
+      - user-management
+      - student-management
+      - academic-management
+      - faculty-management
+      - attendance-management
+      - examination-management
+      - platform-core
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql-data:
+  user-management-uploads:
+  student-management-uploads:
+  faculty-management-uploads:
+  attendance-management-uploads:
